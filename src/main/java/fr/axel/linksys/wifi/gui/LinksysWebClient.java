@@ -39,14 +39,7 @@ public class LinksysWebClient {
 
 	public Map<String, String> fetchAvailableWifiModeChoices() throws IOException {
 		final HtmlPage page = webClient.getPage(url);
-
-		System.out.println(page.asXml());
-
-		final DomElement selectDomElement = page.getElementByName("wl_gmode");
-		final HtmlSelect selectElement = (HtmlSelect) selectDomElement;
-		System.out.println(selectElement);
-
-		final List<HtmlOption> options = selectElement.getOptions();
+		final List<HtmlOption> options = findOptions(page);
 
 		final Map<String, String> optionMap;
 		{
@@ -62,7 +55,19 @@ public class LinksysWebClient {
 		return optionMap;
 	}
 
-	public void switchWifiMode(final String value) {
-		
+	private List<HtmlOption> findOptions(final HtmlPage page) {
+		System.out.println(page.asXml());
+
+		final DomElement selectDomElement = page.getElementByName("wl_gmode");
+		final HtmlSelect selectElement = (HtmlSelect) selectDomElement;
+		System.out.println(selectElement);
+
+		final List<HtmlOption> options = selectElement.getOptions();
+		return options;
+	}
+
+	public void switchWifiMode(final String value) throws IOException {
+		final HtmlPage page = webClient.getPage(url);
+		final List<HtmlOption> options = findOptions(page);
 	}
 }

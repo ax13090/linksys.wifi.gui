@@ -65,7 +65,11 @@ public class LinksysWifiGuiApplication extends Application {
 				choiceButton.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(final ActionEvent event) {
-						linkSysClient.switchWifiMode(mode.getValue());
+						try {
+							linkSysClient.switchWifiMode(mode.getValue());
+						} catch (final IOException e) {
+							throw new RuntimeException(e);
+						}
 						RefreshButtonAction.this.handle(null);
 					}
 				});
