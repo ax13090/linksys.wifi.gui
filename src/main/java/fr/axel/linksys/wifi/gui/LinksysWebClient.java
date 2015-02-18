@@ -1,5 +1,6 @@
-package fr.axel;
+package fr.axel.linksys.wifi.gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -12,29 +13,41 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.google.common.collect.ImmutableMap;
 
-public class App {
-	
-	public static void main( final String[] args ) throws Exception {
-		final WebClient webClient = new WebClient();
+public class LinksysWebClient {
+
+	private final URL url;
+	private final WebClient webClient;
+
+	public static LinksysWebClient create() throws Exception {
 		final String urlString = "http://192.168.1.1/setup.cgi?next_file=Wireless.htm";
 		final URL url = new URL(urlString);
-		
+
+		final WebClient webClient = new WebClient();
 		final DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
 		final String userName = "admin";
 		final String userPassword = "admin";
 		credentialsProvider.addCredentials(userName, userPassword);
 		webClient.setCredentialsProvider(credentialsProvider);
-		
+
+		return new LinksysWebClient(url, webClient);
+	}
+
+	private LinksysWebClient(final URL url, final WebClient webClient) {
+		this.url = url;
+		this.webClient = webClient;
+	}
+
+	public Map<String, String> fetchAvailableWifiModeChoices() throws IOException {
 		final HtmlPage page = webClient.getPage(url);
-		
+
 		System.out.println(page.asXml());
-		
+
 		final DomElement selectDomElement = page.getElementByName("wl_gmode");
 		final HtmlSelect selectElement = (HtmlSelect) selectDomElement;
 		System.out.println(selectElement);
-		
+
 		final List<HtmlOption> options = selectElement.getOptions();
-		
+
 		final Map<String, String> optionMap;
 		{
 			final ImmutableMap.Builder<String, String> optionMapBuilder = ImmutableMap.builder();
@@ -45,5 +58,11 @@ public class App {
 			}
 			optionMap = optionMapBuilder.build();
 		}
+		
+		return optionMap;
+	}
+
+	public void switchWifiMode(final String value) {
+		
 	}
 }

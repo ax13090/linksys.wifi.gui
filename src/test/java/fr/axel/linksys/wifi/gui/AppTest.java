@@ -1,4 +1,4 @@
-package fr.axel;
+package fr.axel.linksys.wifi.gui;
 
 import static org.junit.Assert.*;
 
