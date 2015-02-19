@@ -8,9 +8,11 @@ import java.util.Map;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.google.common.collect.ImmutableMap;
 
 public class LinksysWebClient {
@@ -56,18 +58,27 @@ public class LinksysWebClient {
 	}
 
 	private List<HtmlOption> findOptions(final HtmlPage page) {
-		System.out.println(page.asXml());
-
-		final DomElement selectDomElement = page.getElementByName("wl_gmode");
-		final HtmlSelect selectElement = (HtmlSelect) selectDomElement;
-		System.out.println(selectElement);
-
+		final HtmlSelect selectElement = findWifiModeSelect(page);
 		final List<HtmlOption> options = selectElement.getOptions();
 		return options;
 	}
 
+	private HtmlSelect findWifiModeSelect(final HtmlPage page) {
+		final DomElement selectDomElement = page.getElementByName("wl_gmode");
+		final HtmlSelect selectElement = (HtmlSelect) selectDomElement;
+		return selectElement;
+	}
+
 	public void switchWifiMode(final String value) throws IOException {
 		final HtmlPage page = webClient.getPage(url);
-		final List<HtmlOption> options = findOptions(page);
+		final HtmlSelect select = findWifiModeSelect(page);
+		
+		final HtmlOption optionToSelect = select.getOptionByValue(value);
+		select.setSelectedAttribute(optionToSelect, true);
+
+		final HtmlForm form = page.getFormByName("wireless");
+		final HtmlSubmitInput submitButton = form.getInputByName("save");
+		
+		submitButton.click();
 	}
 }

@@ -7,18 +7,20 @@ import java.util.Map.Entry;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class LinksysWifiGuiApplication extends Application {
 
 	final LinksysWebClient linkSysClient;
-	final VBox vBox = new VBox();
+	final HBox hBox = new HBox();
 
-	private LinksysWifiGuiApplication() {
+	public LinksysWifiGuiApplication() {
 		try {
 			linkSysClient = LinksysWebClient.create();
 		} catch (final Exception e) {
@@ -34,16 +36,25 @@ public class LinksysWifiGuiApplication extends Application {
 	public void start(final Stage stage) throws Exception {
 		
 		final Button refreshButton = new Button("Refresh");
-		final StackPane root = new StackPane();
+		final VBox root = new VBox();
 		root.getChildren().add(refreshButton);
-		root.getChildren().add(vBox);
+		root.getChildren().add(hBox);
 		
 		final EventHandler<ActionEvent> refreshButtonAction = new RefreshButtonAction();
 		refreshButton.setOnAction(refreshButtonAction);
 		
-		stage.setScene(new Scene(root));
-		stage.sizeToScene();
+		final Scene scene = new Scene(root);
+		stage.setScene(scene);
 		stage.setTitle("Linksys Wifi GUI");
+
+		refreshButtonAction.handle(null);
+		
+		final Screen screen = Screen.getPrimary();
+		final Rectangle2D bounds = screen.getVisualBounds();
+		stage.setX(0);
+		stage.setY(0);
+		stage.setWidth(bounds.getWidth() / 2);
+		stage.setHeight(bounds.getHeight() / 2);
 		stage.show();
 	}
 
@@ -58,7 +69,7 @@ public class LinksysWifiGuiApplication extends Application {
 				throw new RuntimeException(e);
 			}
 			
-			vBox.getChildren().clear();
+			hBox.getChildren().clear();
 			for (final Entry<String, String> mode : availableWifiModeChoices.entrySet()) {
 				final Button choiceButton = new Button();
 				choiceButton.setText(mode.getKey());
@@ -73,7 +84,7 @@ public class LinksysWifiGuiApplication extends Application {
 						RefreshButtonAction.this.handle(null);
 					}
 				});
-				vBox.getChildren().add(choiceButton);
+				hBox.getChildren().add(choiceButton);
 			}
 		}
 	}
