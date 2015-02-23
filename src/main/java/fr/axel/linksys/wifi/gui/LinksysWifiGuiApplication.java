@@ -29,7 +29,7 @@ public class LinksysWifiGuiApplication extends Application {
 	}
 
 	public static void main(final String[] args) {
-		launch(args);
+		Application.launch(args);
 	}
 
 	@Override
