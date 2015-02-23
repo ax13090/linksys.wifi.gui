@@ -1,6 +1,8 @@
 package fr.axel.linksys.wifi.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,6 +10,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -71,7 +74,7 @@ public class LinksysWifiGuiApplication extends Application {
 				throw new RuntimeException(e);
 			}
 			
-			hBox.getChildren().clear();
+			final Collection<Node> choiceButtons = new ArrayList<>();
 			for (final Entry<String, String> mode : availableWifiModeChoices.entrySet()) {
 				final Button choiceButton = new Button();
 				choiceButton.setText(mode.getKey());
@@ -86,8 +89,10 @@ public class LinksysWifiGuiApplication extends Application {
 						RefreshButtonAction.this.handle(null);
 					}
 				});
-				hBox.getChildren().add(choiceButton);
+				
+				choiceButtons.add(choiceButton);
 			}
+			hBox.getChildren().setAll(choiceButtons);
 		}
 	}
 }
