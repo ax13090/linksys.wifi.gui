@@ -51,10 +51,12 @@ public class LinksysWifiGuiApplication extends Application {
 		
 		final Screen screen = Screen.getPrimary();
 		final Rectangle2D bounds = screen.getVisualBounds();
-		stage.setX(0);
-		stage.setY(0);
-		stage.setWidth(bounds.getWidth() / 2);
-		stage.setHeight(bounds.getHeight() / 2);
+		final double halvedScreenWidth = bounds.getWidth() / 2;
+		final double halvedScreenHeight = bounds.getHeight() / 2;
+		stage.setX(halvedScreenWidth / 2);
+		stage.setY(halvedScreenHeight / 2);
+		stage.setWidth(halvedScreenWidth);
+		stage.setHeight(halvedScreenHeight);
 		stage.show();
 	}
 
